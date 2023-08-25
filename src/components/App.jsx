@@ -16,10 +16,6 @@ export const App = () => {
   const [isShowModal, setIsShowModal] = useState(false);
   const [selectedIMG, setSelectedIMG] = useState(false);
 
-  const UseToggleModal = () => {
-    setIsShowModal(prev => !prev);
-  };
-
   useEffect(() => {
     if (items.length > 0 || searchText) {
       setIsLoading(true);
@@ -52,10 +48,13 @@ export const App = () => {
       dataset: { original },
     },
   }) => {
-    UseToggleModal();
     setSelectedIMG(original);
+    setIsShowModal(true);
   };
 
+  const handlerCloseModal = () => {
+    setIsShowModal(false);
+  };
   const handlerLoadMore = () => {
     setCurrentPage(prevCurrentPage => prevCurrentPage + 1);
   };
@@ -71,7 +70,10 @@ export const App = () => {
     <>
       <SearchBar handlerSubmit={handlerSubmit} />
       {isShowModal && (
-        <Modal handlerCloseModal={UseToggleModal} selectedIMG={selectedIMG} />
+        <Modal
+          handlerCloseModal={handlerCloseModal}
+          selectedIMG={selectedIMG}
+        />
       )}
       {items.length > 0 && (
         <ImageGalery items={items} handlerImageClick={handlerImageClick} />
