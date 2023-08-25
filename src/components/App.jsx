@@ -16,8 +16,12 @@ export const App = () => {
   const [isShowModal, setIsShowModal] = useState(false);
   const [selectedIMG, setSelectedIMG] = useState(false);
 
+  const UseToggleModal = () => {
+    setIsShowModal(prev => !prev);
+  };
+
   useEffect(() => {
-    if (items.length > 0 || searchText) {
+    if (searchText) {
       setIsLoading(true);
       fetchPixabay(searchText, currentPage)
         .then(resp => {
@@ -32,7 +36,7 @@ export const App = () => {
             setError('Sorry, nothing');
             throw new Error();
           } else {
-            setItems([...items, ...data.hits]);
+            setItems(prevItems => [...prevItems, ...data.hits]);
             setTotalHits(data.totalHits);
           }
         })
@@ -49,12 +53,9 @@ export const App = () => {
     },
   }) => {
     setSelectedIMG(original);
-    setIsShowModal(true);
+    UseToggleModal();
   };
 
-  const handlerCloseModal = () => {
-    setIsShowModal(false);
-  };
   const handlerLoadMore = () => {
     setCurrentPage(prevCurrentPage => prevCurrentPage + 1);
   };
@@ -70,10 +71,7 @@ export const App = () => {
     <>
       <SearchBar handlerSubmit={handlerSubmit} />
       {isShowModal && (
-        <Modal
-          handlerCloseModal={handlerCloseModal}
-          selectedIMG={selectedIMG}
-        />
+        <Modal handlerCloseModal={UseToggleModal} selectedIMG={selectedIMG} />
       )}
       {items.length > 0 && (
         <ImageGalery items={items} handlerImageClick={handlerImageClick} />
